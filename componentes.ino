@@ -31,6 +31,7 @@ const float GAMMA = 0.7;
 const float RL10 = 50;
 
 // ----- VARIÁVEIS DE INTERRUPÇÃO E DEBOUNCE (Utilizar para Debounce em botao) -----
+// Para utilizar dois botoes com debounce, copie e cole as variaveis e função e adicione um 2 na frente, e utilize o buttonstate 2
 volatile unsigned long lastDebounceTime = 0;
 const unsigned long DEBOUNCE_DELAY = 200;
 volatile bool buttonState = false;
@@ -49,6 +50,7 @@ void IRAM_ATTR handleButtonISR() {
     lastDebounceTime = now;
   }
 }
+
 
 void setup() {
   // put your setup code here, to run once:
@@ -132,7 +134,7 @@ void loop() {
         if(perigo || distanceCm < 100)
         {
           potValue = 0;
-          tone(buzzerPin, 1000);
+          tone(buzzerPin, 1000); // Valor mais alto -> frequencia mais alta, caso o buzzer seja ativo apenas usar um digitalWrite
           Serial.println("PERIGO");
 
           analogWrite(redPin,   0);
