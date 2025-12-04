@@ -79,9 +79,9 @@ void loop() {
   delay(10);
   noTone(buzzerPin); // Desativa o buzzer
 
-  /* USO DE ULTRASSONICO
-  Copiar e colar etapas a seguir para medir distancia em CM
-  */
+  // USO DE ULTRASSONICO
+  // Copiar e colar etapas a seguir para medir distancia em CM
+
   // 1. Limpa o pino TRIG para garantir um pulso limpo (LOW)
   digitalWrite(pino_trigger, LOW);
   delayMicroseconds(2); // Pequeno atraso
