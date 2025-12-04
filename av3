@@ -1,0 +1,79 @@
+#include <Arduino.h>
+#include <Update.h>
+#include <DHT.h>
+#include <Wire.h>
+#include <ESP32Servo.h>
+
+Servo motor1;
+
+const int buttonPin = 5;
+const int pinPhot = 1;
+const int ledPin = 2;
+
+#define DHTPIN         10
+#define DHTTYPE        DHT11
+
+DHT dht(DHTPIN, DHTTYPE);
+
+const float RESISTOR_FIXO = 10000;
+const float GAMMA = 0.7;
+const float RL10 = 50;
+
+// ----- VARIÁVEIS DE INTERRUPÇÃO E DEBOUNCE (Utilizar para Debounce em botao) -----
+// Para utilizar dois botoes com debounce, copie e cole as variaveis e função e adicione um 2 na frente, e utilize o buttonstate 2
+volatile unsigned long lastDebounceTime = 0;
+const unsigned long DEBOUNCE_DELAY = 200;
+volatile bool buttonState = false;
+volatile int bounceCount = 0;
+
+// Codigo para interrupção externa no botao, copie e cole no código
+void IRAM_ATTR handleButtonISR() {
+  unsigned long now = millis();
+  if ((now - lastDebounceTime) > DEBOUNCE_DELAY) {
+    // le a borda
+    if (digitalRead(buttonPin) == LOW) {
+      // alterna estado lógico
+      buttonState = !buttonState;
+    }
+    bounceCount++;
+    lastDebounceTime = now;
+  }
+}
+
+
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(115200);
+  dht.begin(); // Incializa o DHT
+
+  pinMode(ledPin, OUTPUT);
+  pinMode(pinPhot, INPUT);
+  motor1.attach(9);
+  motor1.write(0);
+
+  pinMode(buttonPin, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(buttonPin), handleButtonISR, FALLING); // Ativa a interrupção externa, copie e cole junto com o código de interrupção externa acima
+
+  digitalWrite(ledPin, LOW);
+  Serial.println("Hello World!");
+  delay(2000);
+}
+
+void loop(){
+
+  if(buttonState){
+      Serial.println("Sistema desativado");
+      digitalWrite(ledPin, LOW);
+    } else {
+    float temperatura = dht.readTemperature();
+    digitalWrite(ledPin, LOW);
+    motor1.write(45);
+    Serial.print("Temperatura: ");
+    Serial.println(temperatura);
+    delay(1000);
+    digitalWrite(ledPin, HIGH);
+    motor1.write(90);
+    delay(1000);
+    }
+}
+
